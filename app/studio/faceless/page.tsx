@@ -35,10 +35,7 @@ async function renderStoryboardToVideo(
   audio: { mode: AudioMode; file?: File; volume: number }
 ): Promise<Blob> {
   const { width, height, fps } = storyboard.format;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) {
-    throw new Error("Could not get canvas context.");
-  }
+  const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
   canvas.width = width;
   canvas.height = height;
@@ -117,7 +114,7 @@ async function renderStoryboardToVideo(
     recorder.onerror = (e) => reject(e.error);
   });
 
-  function drawScene(scene: StoryboardScene) {
+  function drawScene(scene: StoryboardScene, ctx: CanvasRenderingContext2D) {
     ctx.save();
     ctx.fillStyle =
       scene.bgColor && /^#|rgb|hsl/.test(scene.bgColor)
@@ -188,7 +185,7 @@ async function renderStoryboardToVideo(
 
       const currentScene = storyboard.scenes[sceneIndex];
       const sceneDuration = currentScene.seconds || 2;
-      drawScene(currentScene);
+      drawScene(currentScene, ctx);
 
       if (sceneTime >= sceneDuration) {
         sceneIndex += 1;
